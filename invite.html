@@ -381,14 +381,21 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        var INVITE_RAW = "https://raw.githubusercontent.com/getunie/getunie.github.io/main/invite.json";
-        var INVITE_FALLBACK = "invite.json";
-        var QUEUE_RAW = "https://raw.githubusercontent.com/getunie/getunie.github.io/main/queue.json";
-        var QUEUE_FALLBACK = "queue.json";
+        var INVITE_SOURCES = [
+            "https://cdn.jsdelivr.net/gh/getunie/getunie.github.io@main/invite.json",
+            "https://raw.githubusercontent.com/getunie/getunie.github.io/main/invite.json",
+            "invite.json"
+        ];
+        var QUEUE_SOURCES = [
+            "https://cdn.jsdelivr.net/gh/getunie/getunie.github.io@main/queue.json",
+            "https://raw.githubusercontent.com/getunie/getunie.github.io/main/queue.json",
+            "queue.json"
+        ];
+        var inviteSrc = { idx: 0 }; // 邀请链接数据源索引
+        var queueSrc = { idx: 0 };  // 排队状态数据源索引
         var QUEUE_FORM_URL = "";
         var QUEUE_FORM_TYPE = "github";
         var REFRESH_INTERVAL = 5000; // 5秒刷新一次
-        var useFallback = false; // 是否使用降级源
 
         // Tab 切换
         document.querySelectorAll('.tab').forEach(function(tab) {
@@ -401,26 +408,24 @@
             });
         });
 
-        // 读取 JSON 数据（优先 raw 域名，失败降级到相对路径）
-        function fetchJSON(rawUrl, fallbackUrl, callback) {
-            var primaryUrl = useFallback ? fallbackUrl : rawUrl;
-            fetch(primaryUrl + '?t=' + Date.now(), { cache: 'no-store' })
+        // 读取 JSON 数据（三级源：jsDelivr → raw → 相对路径，自动降级+恢复）
+        function fetchJSON(sources, srcState, callback) {
+            var url = sources[srcState.idx];
+            fetch(url + '?t=' + Date.now(), { cache: 'no-store' })
                 .then(function(res) {
                     if (!res.ok) throw new Error('HTTP ' + res.status);
                     return res.json();
                 })
                 .then(function(data) {
-                    // 如果当前在降级模式，尝试切回主源
-                    if (useFallback) {
-                        fetch(rawUrl + '?t=' + Date.now(), { cache: 'no-store' })
+                    // 成功了，如果当前不是最优源，尝试切回最优
+                    if (srcState.idx > 0) {
+                        fetch(sources[0] + '?t=' + Date.now(), { cache: 'no-store' })
                             .then(function(r) {
-                                if (r.ok) {
-                                    useFallback = false;
-                                    return r.json();
-                                }
+                                if (r.ok) return r.json();
                                 throw new Error('still failing');
                             })
                             .then(function(freshData) {
+                                srcState.idx = 0;
                                 callback(freshData);
                             })
                             .catch(function() {
@@ -431,23 +436,12 @@
                     }
                 })
                 .catch(function(err) {
-                    // 主源失败，尝试降级源
-                    if (!useFallback) {
-                        useFallback = true;
-                        fetch(fallbackUrl + '?t=' + Date.now(), { cache: 'no-store' })
-                            .then(function(res) {
-                                if (!res.ok) throw new Error('HTTP ' + res.status);
-                                return res.json();
-                            })
-                            .then(function(data) {
-                                callback(data);
-                            })
-                            .catch(function(err2) {
-                                console.error('获取数据失败（双源均失败）:', err2);
-                                callback(null);
-                            });
+                    // 当前源失败，降级到下一个
+                    if (srcState.idx < sources.length - 1) {
+                        srcState.idx++;
+                        fetchJSON(sources, srcState, callback);
                     } else {
-                        console.error('获取数据失败:', err);
+                        console.error('获取数据失败（所有源均失败）:', err);
                         callback(null);
                     }
                 });
@@ -455,7 +449,7 @@
 
         // 更新邀请信息
         function updateInvite() {
-            fetchJSON(INVITE_RAW, INVITE_FALLBACK, function(data) {
+            fetchJSON(INVITE_SOURCES, inviteSrc, function(data) {
                 var loading = document.getElementById('inviteLoading');
                 var linkBox = document.getElementById('linkBox');
                 var badge = document.getElementById('statusBadge');
@@ -493,7 +487,7 @@
 
         // 更新排队状态
         function updateQueue() {
-            fetchJSON(QUEUE_RAW, QUEUE_FALLBACK, function(data) {
+            fetchJSON(QUEUE_SOURCES, queueSrc, function(data) {
                 if (!data) {
                     document.getElementById('waitingCount').textContent = '-';
                     document.getElementById('queueList').innerHTML =
