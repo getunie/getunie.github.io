@@ -381,8 +381,8 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        var INVITE_API = "https://api.github.com/repos/getunie/getunie.github.io/contents/invite.json?ref=main";
-        var QUEUE_API = "https://api.github.com/repos/getunie/getunie.github.io/contents/queue.json?ref=main";
+        var INVITE_API = "https://raw.githubusercontent.com/getunie/getunie.github.io/main/invite.json";
+        var QUEUE_API = "https://raw.githubusercontent.com/getunie/getunie.github.io/main/queue.json";
         var QUEUE_FORM_URL = "";
         var QUEUE_FORM_TYPE = "github";
         var REFRESH_INTERVAL = 5000; // 5秒刷新一次
@@ -398,16 +398,15 @@
             });
         });
 
-        // 读取 JSON 数据（GitHub Contents API）
+        // 读取 JSON 数据（从 raw.githubusercontent.com 直接读取）
         function fetchJSON(apiUrl, callback) {
-            fetch(apiUrl, { cache: 'no-store' })
+            fetch(apiUrl + '?t=' + Date.now(), { cache: 'no-store' })
                 .then(function(res) {
                     if (!res.ok) throw new Error('HTTP ' + res.status);
                     return res.json();
                 })
                 .then(function(data) {
-                    var content = atob(data.content);
-                    callback(JSON.parse(content));
+                    callback(data);
                 })
                 .catch(function(err) {
                     console.error('获取数据失败:', err);
