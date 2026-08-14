@@ -10,165 +10,479 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+        }
+        .tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #888;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+        }
+        .tab:hover { color: #667eea; }
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        .tab-content {
+            padding: 1.5rem;
+            display: none;
+        }
+        .tab-content.active { display: block; }
+
+        /* 邀请链接样式 */
+        .invite-section h2 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+        .status-waiting { background: #e8f5e9; color: #2e7d32; }
+        .status-processing { background: #fff3e0; color: #e65100; }
+        .status-offline { background: #ffebee; color: #c62828; }
+
+        .link-box {
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            word-break: break-all;
+            font-size: 0.85rem;
+            position: relative;
+        }
+        .link-box a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover { background: #5568d3; }
+        .copy-btn.copied { background: #4caf50; }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* 排队样式 */
+        .queue-info {
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .queue-count {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        .queue-label {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .current-player {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .current-label {
+            font-size: 0.8rem;
+            color: #e65100;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .current-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #e65100;
+        }
+
+        .queue-list {
+            margin-top: 1rem;
+        }
+        .queue-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .queue-item:last-child { border-bottom: none; }
+        .queue-pos {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background: #f0f0f0;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #888;
+            margin-right: 0.75rem;
         }
-        .card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 2.5rem 3rem;
+        .queue-name {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+        .queue-time {
+            font-size: 0.75rem;
+            color: #aaa;
+        }
+
+        .empty-queue {
             text-align: center;
-            max-width: 420px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem 0;
+            color: #aaa;
+        }
+        .empty-queue .emoji { font-size: 3rem; margin-bottom: 0.5rem; }
+
+        /* 排队按钮 */
+        .queue-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            transition: transform 0.2s;
+        }
+        .queue-btn:hover { transform: translateY(-2px); }
+
+        .rules {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
+        }
+        .rules h3 {
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        .rules ol { padding-left: 1.2rem; }
+        .rules li { margin-bottom: 0.25rem; }
+
+        /* 加载动画 */
+        .loading {
+            text-align: center;
+            padding: 2rem 0;
+            color: #888;
         }
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #f0f0f0;
+            border-top-color: #667eea;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 0 auto 1.5rem;
+            margin: 0 auto 1rem;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        h1 { font-size: 1.3rem; margin-bottom: 0.75rem; font-weight: 600; }
-        p { opacity: 0.9; font-size: 0.9rem; margin-bottom: 0.5rem; }
-        .link-box {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            margin: 1rem 0;
-            word-break: break-all;
-            font-size: 0.8rem;
-            text-align: left;
-        }
-        .link-box a {
-            color: white;
-            text-decoration: none;
-        }
-        .link-box a:hover {
-            text-decoration: underline;
-        }
-        .time {
-            margin-top: 1.5rem;
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .update-time {
+            text-align: center;
             font-size: 0.75rem;
-            opacity: 0.6;
+            color: #aaa;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f0f0f0;
         }
-        .hint {
-            margin-top: 0.5rem;
-            font-size: 0.75rem;
-            opacity: 0.7;
-        }
-        .error {
-            color: #ffd4d4;
-            background: rgba(255, 0, 0, 0.2);
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            margin: 1rem 0;
-            font-size: 0.85rem;
-            display: none;
-        }
-        .retry-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
             color: white;
-            padding: 0.5rem 1.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 1000;
         }
-        .retry-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        .status {
-            font-size: 0.8rem;
-            opacity: 0.7;
-            margin-top: 0.5rem;
-        }
+        .toast.show { opacity: 1; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="spinner" id="spinner"></div>
-        <h1 id="title">正在获取最新邀请链接...</h1>
-        <p id="subtitle">请稍候</p>
-        <div class="link-box" id="linkBox" style="display:none;">
-            <a id="link" href=""></a>
+    <div class="container">
+        <div class="card">
+            <div class="tabs">
+                <div class="tab active" data-tab="invite">当前队伍</div>
+                <div class="tab" data-tab="queue-join">我要排队</div>
+                <div class="tab" data-tab="queue-status">排队情况</div>
+            </div>
+
+            <!-- Tab: 当前队伍 -->
+            <div class="tab-content active" id="tab-invite">
+                <div class="invite-section">
+                    <h2 id="inviteTitle">加载中...</h2>
+                    <div id="statusBadge" class="status-badge status-offline">离线</div>
+                </div>
+                <div class="link-box" id="linkBox" style="display:none;">
+                    <span id="linkText"></span>
+                    <button class="copy-btn" id="copyBtn" onclick="copyLink()">复制</button>
+                </div>
+                <div class="loading" id="inviteLoading">
+                    <div class="spinner"></div>
+                    <p>正在获取队伍信息...</p>
+                </div>
+                <div class="info-row">
+                    <span>模式</span>
+                    <span id="modeText">-</span>
+                </div>
+                <div class="info-row">
+                    <span>更新时间</span>
+                    <span id="inviteTime">-</span>
+                </div>
+            </div>
+
+            <!-- Tab: 我要排队 -->
+            <div class="tab-content" id="tab-queue-join">
+                <a href='https://github.com/getunie/getunie.github.io/issues/new?labels=queue&template=queue.md&title=%E6%8E%92%E9%98%9F%E7%BB%84%E9%98%9F' target='_blank' class='queue-btn'>🚀 点击排队</a>
+                <div class="rules">
+                    <h3>📋 排队规则</h3>
+                    <ol>
+                        <li>点击上方按钮，在 GitHub Issue 中填写你的邀请链接</li>
+                        <li>每人（每个邀请链接）只能成功排一次</li>
+                        <li>如果加入失败（超时），可以重新打开 Issue 重排</li>
+                        <li>三个角色加入你的队伍后即完成，自动进行下一个</li>
+                        <li>1 分钟内无法加入则跳过，视为失败</li>
+                        <li>没人排队时，会回到自己建队等人模式</li>
+                    </ol>
+                </div>
+                <div style="margin-top: 1rem; font-size: 0.8rem; color: #999; text-align: center;">
+                    需要 GitHub 账号，没有的话可以免费注册一个
+                </div>
+            </div>
+
+            <!-- Tab: 排队情况 -->
+            <div class="tab-content" id="tab-queue-status">
+                <div class="queue-info">
+                    <div class="queue-count" id="waitingCount">-</div>
+                    <div class="queue-label">人正在排队</div>
+                </div>
+
+                <div id="currentSection" style="display:none;">
+                    <div class="current-player">
+                        <div class="current-label">🎯 正在组队</div>
+                        <div class="current-name" id="currentName">-</div>
+                    </div>
+                </div>
+
+                <div class="queue-list" id="queueList">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>正在获取队列信息...</p>
+                    </div>
+                </div>
+
+                <div class="update-time" id="queueUpdateTime">-</div>
+            </div>
         </div>
-        <p class="hint" id="hint" style="display:none;">如果没有自动跳转，请点击上方链接</p>
-        <div class="error" id="errorBox">
-            <p id="errorText"></p>
-            <button class="retry-btn" onclick="fetchInvite()">重试</button>
-        </div>
-        <div class="status" id="status"></div>
-        <div class="time" id="updateTime"></div>
     </div>
 
+    <div class="toast" id="toast"></div>
+
     <script>
-        var API_URL = "https://api.github.com/repos/getunie/getunie.github.io/contents/invite.json?ref=main";
-        var retryCount = 0;
-        var MAX_RETRY = 3;
+        var INVITE_API = "https://api.github.com/repos/getunie/getunie.github.io/contents/invite.json?ref=main";
+        var QUEUE_API = "https://api.github.com/repos/getunie/getunie.github.io/contents/queue.json?ref=main";
+        var REFRESH_INTERVAL = 5000; // 5秒刷新一次
 
-        function fetchInvite() {
-            document.getElementById('spinner').style.display = '';
-            document.getElementById('title').textContent = '正在获取最新邀请链接...';
-            document.getElementById('subtitle').textContent = '请稍候';
-            document.getElementById('errorBox').style.display = 'none';
-            document.getElementById('linkBox').style.display = 'none';
-            document.getElementById('hint').style.display = 'none';
-            document.getElementById('status').textContent = '';
+        // Tab 切换
+        document.querySelectorAll('.tab').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                var tabName = this.getAttribute('data-tab');
+                document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                this.classList.add('active');
+                document.getElementById('tab-' + tabName).classList.add('active');
+            });
+        });
 
-            fetch(API_URL, { cache: 'no-store' })
-                .then(function(response) {
-                    if (!response.ok) throw new Error('HTTP ' + response.status);
-                    return response.json();
+        // 读取 JSON 数据（GitHub Contents API）
+        function fetchJSON(apiUrl, callback) {
+            fetch(apiUrl, { cache: 'no-store' })
+                .then(function(res) {
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return res.json();
                 })
                 .then(function(data) {
-                    // 解码 base64 内容
                     var content = atob(data.content);
-                    var invite = JSON.parse(content);
-
-                    document.getElementById('spinner').style.display = 'none';
-                    document.getElementById('title').textContent = '正在加入队伍...';
-                    document.getElementById('subtitle').textContent = '页面将自动跳转到队伍邀请链接';
-                    document.getElementById('linkBox').style.display = '';
-                    document.getElementById('hint').style.display = '';
-                    document.getElementById('link').href = invite.url;
-                    document.getElementById('link').textContent = invite.url;
-
-                    if (invite.updated_at) {
-                        document.getElementById('updateTime').textContent = '链接更新时间：' + invite.updated_at;
-                    }
-
-                    // 立即跳转
-                    window.location.href = invite.url;
+                    callback(JSON.parse(content));
                 })
                 .catch(function(err) {
-                    retryCount++;
-                    document.getElementById('spinner').style.display = 'none';
-                    document.getElementById('title').textContent = '获取链接失败';
-                    document.getElementById('subtitle').textContent = '请稍候重试或手动加入';
-                    document.getElementById('errorBox').style.display = '';
-                    document.getElementById('errorText').textContent = err.message;
-                    document.getElementById('status').textContent = '第 ' + retryCount + ' 次尝试 / 最多 ' + MAX_RETRY + ' 次';
-
-                    // 自动重试
-                    if (retryCount < MAX_RETRY) {
-                        setTimeout(fetchInvite, 2000);
-                    }
+                    console.error('获取数据失败:', err);
+                    callback(null);
                 });
         }
 
-        // 页面加载后立即获取
-        fetchInvite();
+        // 更新邀请信息
+        function updateInvite() {
+            fetchJSON(INVITE_API, function(data) {
+                var loading = document.getElementById('inviteLoading');
+                var linkBox = document.getElementById('linkBox');
+                var badge = document.getElementById('statusBadge');
+                var title = document.getElementById('inviteTitle');
+
+                if (!data) {
+                    loading.style.display = 'block';
+                    linkBox.style.display = 'none';
+                    badge.className = 'status-badge status-offline';
+                    badge.textContent = '离线';
+                    title.textContent = '加载失败';
+                    return;
+                }
+
+                loading.style.display = 'none';
+                linkBox.style.display = 'block';
+
+                document.getElementById('linkText').textContent = data.url;
+                document.getElementById('inviteTime').textContent = data.updated_at || '-';
+
+                var modeText = data.mode === 'queue' ? '排队带人模式' : '自建队伍模式';
+                document.getElementById('modeText').textContent = modeText;
+
+                if (data.status === 'processing') {
+                    badge.className = 'status-badge status-processing';
+                    badge.textContent = '正在带人';
+                    title.textContent = '🚀 正在组队中';
+                } else {
+                    badge.className = 'status-badge status-waiting';
+                    badge.textContent = '等人中';
+                    title.textContent = '🎮 当前队伍';
+                }
+            });
+        }
+
+        // 更新排队状态
+        function updateQueue() {
+            fetchJSON(QUEUE_API, function(data) {
+                if (!data) {
+                    document.getElementById('waitingCount').textContent = '-';
+                    document.getElementById('queueList').innerHTML =
+                        '<div class="empty-queue"><div class="emoji">❌</div><p>获取队列信息失败</p></div>';
+                    return;
+                }
+
+                document.getElementById('waitingCount').textContent = data.waiting_count || 0;
+                document.getElementById('queueUpdateTime').textContent = '更新于 ' + (data.updated_at || '-');
+
+                // 当前正在组队的
+                var currentSection = document.getElementById('currentSection');
+                if (data.current) {
+                    currentSection.style.display = 'block';
+                    document.getElementById('currentName').textContent = data.current.name || '匿名用户';
+                } else {
+                    currentSection.style.display = 'none';
+                }
+
+                // 排队列表
+                var listEl = document.getElementById('queueList');
+                var waiting = data.waiting || [];
+
+                if (waiting.length === 0) {
+                    listEl.innerHTML = '<div class="empty-queue"><div class="emoji">😊</div><p>暂时没人排队</p><p style="font-size:0.8rem;">快喊朋友来组队吧</p></div>';
+                    return;
+                }
+
+                var html = '';
+                waiting.forEach(function(item, idx) {
+                    html += '<div class="queue-item">' +
+                        '<div class="queue-pos">' + (idx + 1) + '</div>' +
+                        '<div class="queue-name">' + (item.name || '匿名用户') + '</div>' +
+                        '<div class="queue-time">#' + item.number + '</div>' +
+                    '</div>';
+                });
+                listEl.innerHTML = html;
+            });
+        }
+
+        // 复制链接
+        function copyLink() {
+            var link = document.getElementById('linkText').textContent;
+            navigator.clipboard.writeText(link).then(function() {
+                var btn = document.getElementById('copyBtn');
+                btn.textContent = '已复制';
+                btn.classList.add('copied');
+                showToast('链接已复制');
+                setTimeout(function() {
+                    btn.textContent = '复制';
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(function() {
+                showToast('复制失败，请手动复制');
+            });
+        }
+
+        // Toast 提示
+        function showToast(msg) {
+            var toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(function() {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // 初始化
+        updateInvite();
+        updateQueue();
+        setInterval(function() {
+            updateInvite();
+            updateQueue();
+        }, REFRESH_INTERVAL);
     </script>
 </body>
 </html>
