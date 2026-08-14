@@ -381,11 +381,14 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        var INVITE_API = "invite.json";
-        var QUEUE_API = "queue.json";
+        var INVITE_RAW = "https://raw.githubusercontent.com/getunie/getunie.github.io/main/invite.json";
+        var INVITE_FALLBACK = "invite.json";
+        var QUEUE_RAW = "https://raw.githubusercontent.com/getunie/getunie.github.io/main/queue.json";
+        var QUEUE_FALLBACK = "queue.json";
         var QUEUE_FORM_URL = "";
         var QUEUE_FORM_TYPE = "github";
         var REFRESH_INTERVAL = 5000; // 5秒刷新一次
+        var useFallback = false; // 是否使用降级源
 
         // Tab 切换
         document.querySelectorAll('.tab').forEach(function(tab) {
@@ -398,25 +401,61 @@
             });
         });
 
-        // 读取 JSON 数据（从 raw.githubusercontent.com 直接读取）
-        function fetchJSON(apiUrl, callback) {
-            fetch(apiUrl + '?t=' + Date.now(), { cache: 'no-store' })
+        // 读取 JSON 数据（优先 raw 域名，失败降级到相对路径）
+        function fetchJSON(rawUrl, fallbackUrl, callback) {
+            var primaryUrl = useFallback ? fallbackUrl : rawUrl;
+            fetch(primaryUrl + '?t=' + Date.now(), { cache: 'no-store' })
                 .then(function(res) {
                     if (!res.ok) throw new Error('HTTP ' + res.status);
                     return res.json();
                 })
                 .then(function(data) {
-                    callback(data);
+                    // 如果当前在降级模式，尝试切回主源
+                    if (useFallback) {
+                        fetch(rawUrl + '?t=' + Date.now(), { cache: 'no-store' })
+                            .then(function(r) {
+                                if (r.ok) {
+                                    useFallback = false;
+                                    return r.json();
+                                }
+                                throw new Error('still failing');
+                            })
+                            .then(function(freshData) {
+                                callback(freshData);
+                            })
+                            .catch(function() {
+                                callback(data);
+                            });
+                    } else {
+                        callback(data);
+                    }
                 })
                 .catch(function(err) {
-                    console.error('获取数据失败:', err);
-                    callback(null);
+                    // 主源失败，尝试降级源
+                    if (!useFallback) {
+                        useFallback = true;
+                        fetch(fallbackUrl + '?t=' + Date.now(), { cache: 'no-store' })
+                            .then(function(res) {
+                                if (!res.ok) throw new Error('HTTP ' + res.status);
+                                return res.json();
+                            })
+                            .then(function(data) {
+                                callback(data);
+                            })
+                            .catch(function(err2) {
+                                console.error('获取数据失败（双源均失败）:', err2);
+                                callback(null);
+                            });
+                    } else {
+                        console.error('获取数据失败:', err);
+                        callback(null);
+                    }
                 });
         }
 
         // 更新邀请信息
         function updateInvite() {
-            fetchJSON(INVITE_API, function(data) {
+            fetchJSON(INVITE_RAW, INVITE_FALLBACK, function(data) {
                 var loading = document.getElementById('inviteLoading');
                 var linkBox = document.getElementById('linkBox');
                 var badge = document.getElementById('statusBadge');
@@ -454,7 +493,7 @@
 
         // 更新排队状态
         function updateQueue() {
-            fetchJSON(QUEUE_API, function(data) {
+            fetchJSON(QUEUE_RAW, QUEUE_FALLBACK, function(data) {
                 if (!data) {
                     document.getElementById('waitingCount').textContent = '-';
                     document.getElementById('queueList').innerHTML =
