@@ -1,15 +1,17 @@
 {
-  "current": {
-    "number": 3,
-    "position": 1,
-    "name": "getunie",
-    "created_at": "2026-08-14T04:39:02Z",
-    "status": "waiting"
-  },
-  "waiting": [],
-  "waiting_count": 0,
+  "current": null,
+  "waiting": [
+    {
+      "number": 3,
+      "position": 1,
+      "name": "getunie",
+      "created_at": "2026-08-14T04:39:02Z",
+      "status": "waiting"
+    }
+  ],
+  "waiting_count": 1,
   "queue_repo": "getunie/getunie.github.io",
   "queue_label": "queue",
-  "updated_at": "2026-08-14 14:15:26",
-  "timestamp": 1786688126
+  "updated_at": "2026-08-14 14:17:23",
+  "timestamp": 1786688243
 }
